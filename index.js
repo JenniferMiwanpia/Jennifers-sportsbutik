@@ -1,6 +1,14 @@
 const categoryList = document.querySelector("#categories");
 const statusMessage = document.querySelector("#status");
 const retryButton = document.querySelector("#retry");
+const categoryImages = {
+  Accessories: 1526,
+  Apparel: 1644,
+  Footwear: 1543,
+  "Free Items": 10595,
+  "Personal Care": 18441,
+  "Sporting Goods": 1628,
+};
 
 retryButton.addEventListener("click", getCategories);
 getCategories();
@@ -30,15 +38,18 @@ async function getCategories() {
 }
 
 // Kategoriens navn sendes med i linket til produktlisten.
-function showCategory(item, index) {
+function showCategory(item) {
   const link = document.createElement("a");
   link.className = "category-card";
   link.href = "productlist.html?" + new URLSearchParams({ category: item.category });
 
-  const number = document.createElement("span");
-  number.className = "eyebrow";
-  number.textContent = String(index + 1).padStart(2, "0");
-  number.setAttribute("aria-hidden", "true");
+  const image = document.createElement("img");
+  image.alt = "";
+  image.loading = "lazy";
+  image.addEventListener("error", () => { image.hidden = true; });
+  if (categoryImages[item.category]) {
+    image.src = "https://kea-alt-del.dk/t7/images/webp/640/" + categoryImages[item.category] + ".webp";
+  }
 
   const heading = document.createElement("h3");
   heading.textContent = item.category;
@@ -46,6 +57,6 @@ function showCategory(item, index) {
   const arrow = document.createElement("span");
   arrow.textContent = "Se produkter →";
 
-  link.append(number, heading, arrow);
+  link.append(image, heading, arrow);
   categoryList.append(link);
 }
