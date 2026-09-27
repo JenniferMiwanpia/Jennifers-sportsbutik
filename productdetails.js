@@ -1,9 +1,15 @@
 // Produktlisten sender id'et med i linket, fx productdetails.html?id=1535.
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
+const category = params.get("category");
 const statusMessage = document.querySelector("#status");
 const retryButton = document.querySelector("#retry");
 const productCard = document.querySelector("#product");
+
+// Tilbage-linket husker kategorien fra produktlisten.
+document.querySelector(".back-link").href = category
+  ? "productlist.html?" + new URLSearchParams({ category })
+  : "productlist.html";
 
 const colours = {
   "Silver-Black": "sølvfarvet og sort",
@@ -80,7 +86,8 @@ function showProduct(product) {
   const name = product.productdisplayname.toLowerCase();
   const colourKey = Object.keys(colours).find((key) => name.includes(key.toLowerCase())) || product.basecolour;
   const colour = colours[colourKey] || product.basecolour || "";
-  const type = name.includes("swimming cap") ? "badehætte" : types[product.articletype] || product.articletype || "produkt";
+  const danishType = name.includes("swimming cap") ? "badehætte" : types[product.articletype];
+  const type = danishType || product.articletype || "produkt";
 
   document.title = product.productdisplayname + " | Jennifers sportsbutik";
   document.querySelector("#brand").textContent = product.brandname || "";
@@ -100,7 +107,9 @@ function showProduct(product) {
   const foundMaterials = Object.keys(materials)
     .filter((key) => materialText.includes(key))
     .map((key) => materials[key]);
-  const shortText = [colour, type].filter(Boolean).join(" ");
+  const shortText = danishType
+    ? [colour, danishType].filter(Boolean).join(" ")
+    : colour ? "Farve: " + colour : "Produkt fra " + (product.brandname || "butikken");
   const material = foundMaterials.length ? " · " + foundMaterials.slice(0, 2).join(" og ") : "";
   document.querySelector("#description").textContent = shortText[0].toUpperCase() + shortText.slice(1) + material;
   document.querySelector("#description-section").hidden = false;
