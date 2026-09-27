@@ -1,9 +1,37 @@
 <!doctype html>
 <html lang="da">
-<head>
-<meta charset="utf-8">
-<meta http-equiv="refresh" content="0;url=productlist.html">
-<title>Jennifers sportsbutik</title>
-</head>
-<body><a href="productlist.html">Se produktlisten</a></body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kategorier | Jennifers sportsbutik</title>
+    <link rel="stylesheet" href="index.css" />
+    <script src="index.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Spring til indhold</a>
+    <header class="site-header">
+      <a class="logo" href="index.html">jennifers sportsbutik<span>.</span></a>
+      <nav aria-label="Hovedmenu"><a href="index.html" aria-current="page">Kategorier</a></nav>
+    </header>
+
+    <main id="main">
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow">Sport og hverdag</p>
+        <h1 id="page-title">Din stil.<br /><span>Dit næste fund.</span></h1>
+        <p>Vælg en kategori, og se produkterne.</p>
+      </section>
+      <section aria-labelledby="categories-title">
+        <div class="collection-header"><h2 id="categories-title">Kategorier</h2></div>
+        <p id="status" role="status">Henter kategorier …</p>
+        <noscript>Slå JavaScript til for at se kategorierne.</noscript>
+        <button id="retry" type="button" hidden>Prøv igen</button>
+        <div id="categories" class="category-grid"></div>
+      </section>
+    </main>
+
+    <footer>
+      <a class="logo" href="index.html">jennifers sportsbutik<span>.</span></a>
+      <p>Fashion · Sport og hverdag</p>
+    </footer>
+  </body>
 </html>

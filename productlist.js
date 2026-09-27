@@ -3,8 +3,15 @@ const template = document.querySelector("#product-template");
 const statusMessage = document.querySelector("#status");
 const retryButton = document.querySelector("#retry");
 
-// samme udvalg af accessories som på referencesiden
-const endpoint = "https://kea-alt-del.dk/t7/api/products?category=Accessories&limit=30";
+// Kategorien kommer fra linket på forsiden. Uden link vises Accessories.
+const category = new URLSearchParams(window.location.search).get("category") || "Accessories";
+const endpoint = "https://kea-alt-del.dk/t7/api/products?" +
+  new URLSearchParams({ category, limit: "30" });
+
+document.title = category + " | Jennifers sportsbutik";
+document.querySelector("#category-name").textContent = category;
+document.querySelector("#collection-title").textContent = category;
+document.querySelector("#intro-text").textContent = "Produkter i kategorien " + category + ".";
 
 retryButton.addEventListener("click", getProducts);
 getProducts();
@@ -55,8 +62,9 @@ function showProduct(product) {
       maximumFractionDigits: 2,
     });
 
-  // sender id med i linket - detaljesiden laves senere
-  clone.querySelector(".product-link").href = "productdetails.html?id=" + encodeURIComponent(product.id);
+  // Sender produktets id og den valgte kategori med til detaljesiden.
+  clone.querySelector(".product-link").href = "productdetails.html?" +
+    new URLSearchParams({ id: product.id, category });
 
   const image = clone.querySelector("img");
   const fallback = clone.querySelector(".image-fallback");
