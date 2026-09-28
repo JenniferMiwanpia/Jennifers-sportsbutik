@@ -78,7 +78,7 @@ function visProdukt(produkt) {
   let beskrivelse = farve ? "Farve: " + farve : type;
   if (materiale) beskrivelse += " · " + materiale;
 
-  produktKort.className = "detail-grid " + (produkt.soldout ? "soldout" : "");
+  produktKort.className = "detail-grid " + (produkt.soldout ? "udsolgt" : "");
   produktKort.innerHTML = `
     <div class="product-image">
       <img id="product-image" src="https://kea-alt-del.dk/t7/images/webp/640/${Number(produkt.id)}.webp"

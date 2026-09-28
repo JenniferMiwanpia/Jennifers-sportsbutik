@@ -134,7 +134,7 @@ h2 {
   color: white;
   background: #33442b;
 }
-.soldout .product-image img {
+.udsolgt .product-image img {
   filter: grayscale(1);
   opacity: 0.6;
 }

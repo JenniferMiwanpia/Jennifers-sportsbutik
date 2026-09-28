@@ -40,7 +40,7 @@ function visData(json) {
     const tilbudspris = Math.round(produkt.price - produkt.price * produkt.discount / 100);
 
     produktliste.innerHTML += `
-      <article class="product-card ${produkt.soldout ? "soldout" : ""}">
+      <article class="product-card ${produkt.soldout ? "udsolgt" : ""}">
         <a class="product-link">
           <div class="product-image">
             <img src="https://kea-alt-del.dk/t7/images/webp/640/${Number(produkt.id)}.webp"
