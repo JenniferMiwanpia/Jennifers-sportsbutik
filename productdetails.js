@@ -17,7 +17,7 @@ const farver = {
   "Blue-Black": "blå og sort",
   "Navy Blue": "mørkeblå",
   "Marine Blue": "mørkeblå",
-  Black: "sort", Blue: "blå", Red: "rød", Orange: "orange",
+  Black: "sort", White: "hvid", Blue: "blå", Red: "rød", Orange: "orange",
   Green: "grøn", Pink: "pink", Grey: "grå", Purple: "lilla",
   Beige: "beige", Brown: "brun",
 };
