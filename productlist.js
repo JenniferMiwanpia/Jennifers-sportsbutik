@@ -55,12 +55,27 @@ function showProduct(product) {
 
   clone.querySelector(".product-name").textContent = displayName;
   clone.querySelector(".product-brand").textContent = product.brandname + " · " + product.articletype;
-  clone.querySelector(".product-price").textContent =
-    "Pris: " +
-    Number(product.price).toLocaleString("da-DK", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
+  const price = clone.querySelector(".product-price");
+  price.textContent = "Pris: " + formatPrice(product.price);
+
+  // Viser kun tilbud og udsolgt, når det står i API'et.
+  if (product.soldout) {
+    clone.querySelector(".product-card").classList.add("soldout");
+    clone.querySelector(".soldout-label").hidden = false;
+  }
+
+  if (product.discount) {
+    const discountLabel = clone.querySelector(".discount-label");
+    discountLabel.hidden = false;
+    discountLabel.textContent = "Tilbud · -" + product.discount + "%";
+
+    // Trækker rabatten i procent fra den oprindelige pris.
+    const salePrice = product.price - product.price * product.discount / 100;
+    price.textContent = "Nu: " + formatPrice(salePrice);
+    price.classList.add("sale-price");
+    clone.querySelector(".product-old-price").hidden = false;
+    clone.querySelector(".product-old-price del").textContent = formatPrice(product.price);
+  }
 
   // Sender produktets id og den valgte kategori med til detaljesiden.
   clone.querySelector(".product-link").href = "productdetails.html?" +
@@ -77,4 +92,11 @@ function showProduct(product) {
 
   image.src = "https://kea-alt-del.dk/t7/images/webp/640/" + product.id + ".webp";
   productList.append(clone);
+}
+
+function formatPrice(price) {
+  return Number(price).toLocaleString("da-DK", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 }

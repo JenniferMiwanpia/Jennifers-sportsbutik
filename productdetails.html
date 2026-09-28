@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Produktdetaljer | Jennifers sportsbutik</title>
     <!-- CSS styrer udseendet, og defer gør at HTML'en læses før JavaScript kører. -->
-    <link rel="stylesheet" href="productdetails.css" />
-    <script src="productdetails.js" defer></script>
+    <link rel="stylesheet" href="productdetails.css?v=2" />
+    <script src="productdetails.js?v=2" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Spring til indhold</a>
@@ -26,11 +26,18 @@
         <div class="product-image">
           <img id="product-image" alt="" width="640" height="854" />
           <span id="image-fallback" hidden>Billede mangler</span>
+          <div class="product-labels">
+            <span id="discount-label" class="discount-label" hidden></span>
+            <span id="soldout-label" class="soldout-label" hidden>Udsolgt</span>
+          </div>
         </div>
         <div class="detail-info">
           <p id="brand" class="eyebrow"></p>
           <h1 id="product-name"></h1>
-          <p id="price" class="price"></p>
+          <div class="price">
+            <p id="price"></p>
+            <p id="old-price" class="product-old-price" hidden>Før: <del></del></p>
+          </div>
           <!-- De tomme felter bliver udfyldt med oplysninger om det valgte produkt. -->
           <dl>
             <div><dt>Type</dt><dd id="type"></dd></div>

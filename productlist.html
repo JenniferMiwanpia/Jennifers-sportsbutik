@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Produkter | Jennifers sportsbutik</title>
-    <link rel="stylesheet" href="productlist.css" />
-    <script src="productlist.js" defer></script>
+    <link rel="stylesheet" href="productlist.css?v=2" />
+    <script src="productlist.js?v=2" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Spring til indhold</a>
@@ -33,11 +33,18 @@
           <div class="product-image">
             <img alt="" width="640" height="854" loading="lazy" />
             <span class="image-fallback" hidden>Billede mangler</span>
+            <div class="product-labels">
+              <span class="discount-label" hidden></span>
+              <span class="soldout-label" hidden>Udsolgt</span>
+            </div>
           </div>
           <p class="product-brand"></p>
           <h3 class="product-name"></h3>
           <div class="product-bottom">
-            <p class="product-price"></p>
+            <div class="product-prices">
+              <p class="product-price"></p>
+              <p class="product-old-price" hidden>Før: <del></del></p>
+            </div>
             <span class="product-cta">Se produkt <span aria-hidden="true">↗</span></span>
           </div>
         </a>

@@ -92,11 +92,22 @@ function showProduct(product) {
   document.title = product.productdisplayname + " | Jennifers sportsbutik";
   document.querySelector("#brand").textContent = product.brandname || "";
   document.querySelector("#product-name").textContent = product.productdisplayname;
-  document.querySelector("#price").textContent =
-    "Pris: " + Number(product.price).toLocaleString("da-DK", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
+  const price = document.querySelector("#price");
+  price.textContent = "Pris: " + formatPrice(product.price);
+
+  // Detaljesiden bruger de samme tilbud og lagerstatus som listen.
+  productCard.classList.toggle("soldout", Boolean(product.soldout));
+  document.querySelector("#soldout-label").hidden = !product.soldout;
+  document.querySelector("#discount-label").hidden = !product.discount;
+  document.querySelector("#old-price").hidden = !product.discount;
+  price.classList.toggle("sale-price", Boolean(product.discount));
+
+  if (product.discount) {
+    document.querySelector("#discount-label").textContent = "Tilbud · -" + product.discount + "%";
+    const salePrice = product.price - product.price * product.discount / 100;
+    price.textContent = "Nu: " + formatPrice(salePrice);
+    document.querySelector("#old-price del").textContent = formatPrice(product.price);
+  }
   document.querySelector("#type").textContent = type;
   document.querySelector("#colour").textContent = colour ? colour[0].toUpperCase() + colour.slice(1) : "–";
   document.querySelector("#gender").textContent = { Men: "Herre", Women: "Dame" }[product.gender] || product.gender || "–";
@@ -125,4 +136,11 @@ function showProduct(product) {
     fallback.hidden = false;
   };
   image.src = "https://kea-alt-del.dk/t7/images/webp/640/" + product.id + ".webp";
+}
+
+function formatPrice(price) {
+  return Number(price).toLocaleString("da-DK", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 }

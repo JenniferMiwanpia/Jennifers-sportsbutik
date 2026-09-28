@@ -93,6 +93,7 @@ h2 {
   height: 100%;
 }
 .product-image {
+  position: relative;
   background: white;
   aspect-ratio: 3 / 4;
   overflow: hidden;
@@ -108,6 +109,34 @@ h2 {
 }
 .image-fallback {
   color: #60645b;
+}
+.product-labels {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.discount-label,
+.soldout-label {
+  padding: 7px 10px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.discount-label {
+  color: #5c3516;
+  background: #f4dc9d;
+}
+.soldout-label {
+  color: white;
+  background: #33442b;
+}
+.soldout .product-image img {
+  filter: grayscale(1);
+  opacity: 0.6;
 }
 .product-brand {
   text-transform: uppercase;
@@ -133,6 +162,15 @@ h3 {
 .product-price {
   font-size: 14px;
   margin: 0;
+}
+.sale-price {
+  color: #813326;
+  font-weight: 700;
+}
+.product-old-price {
+  color: #60645b;
+  font-size: 12px;
+  margin: 6px 0 0;
 }
 .product-cta {
   font-size: 12px;
