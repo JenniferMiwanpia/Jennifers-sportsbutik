@@ -1,146 +1,132 @@
-// Produktlisten sender id'et med i linket, fx productdetails.html?id=1535.
+// Id'et kommer fra det produkt, man klikker på i listen.
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
-const category = params.get("category");
+const cat = params.get("category");
+const endpoint = "https://kea-alt-del.dk/t7/api/products/" + encodeURIComponent(id);
+const produktKort = document.querySelector("#product");
 const statusMessage = document.querySelector("#status");
 const retryButton = document.querySelector("#retry");
-const productCard = document.querySelector("#product");
 
-// Tilbage-linket husker kategorien fra produktlisten.
-document.querySelector(".back-link").href = category
-  ? "productlist.html?" + new URLSearchParams({ category })
+// Tilbage-linket husker den valgte kategori.
+document.querySelector(".back-link").href = cat
+  ? "productlist.html?category=" + encodeURIComponent(cat)
   : "productlist.html";
 
-const colours = {
+const farver = {
   "Silver-Black": "sølvfarvet og sort",
   "Blue-Black": "blå og sort",
   "Navy Blue": "mørkeblå",
   "Marine Blue": "mørkeblå",
-  Black: "sort",
-  Blue: "blå",
-  Red: "rød",
-  Orange: "orange",
-  Green: "grøn",
-  Pink: "pink",
-  Grey: "grå",
-  Purple: "lilla",
-  Beige: "beige",
-  Brown: "brun",
+  Black: "sort", Blue: "blå", Red: "rød", Orange: "orange",
+  Green: "grøn", Pink: "pink", Grey: "grå", Purple: "lilla",
+  Beige: "beige", Brown: "brun",
 };
-const types = {
-  Backpacks: "rygsæk",
-  Caps: "kasket",
-  "Water Bottle": "drikkedunk",
-  Handbags: "taske",
+const typer = {
+  Backpacks: "rygsæk", Caps: "kasket",
+  "Water Bottle": "drikkedunk", Handbags: "taske",
 };
-const materials = {
-  polyester: "polyester",
-  nylon: "nylon",
-  polyamide: "polyamid",
-  silicone: "silikone",
-  cotton: "bomuld",
-};
+const koen = { Men: "Herre", Women: "Dame", Unisex: "Unisex" };
 
-retryButton.addEventListener("click", getProduct);
-getProduct();
+retryButton.addEventListener("click", hentProdukt);
+hentProdukt();
 
-// Henter ét produkt ud fra id'et i adressen.
-async function getProduct() {
-  // Hvis der mangler et gyldigt id, kan siden ikke vide, hvilket produkt den skal vise.
-  if (!id || !/^\d+$/.test(id)) {
+// Henter ét produkt, så her bruges ingen forEach.
+function hentProdukt() {
+  if (!id) {
     statusMessage.textContent = "Vælg et produkt fra produktlisten.";
     return;
   }
 
-  productCard.hidden = true;
+  produktKort.hidden = true;
   retryButton.hidden = true;
   statusMessage.textContent = "Henter produkt …";
 
-  try {
-    // API'et giver oplysningerne om det valgte produkt.
-    const response = await fetch("https://kea-alt-del.dk/t7/api/products/" + id, {
-      signal: AbortSignal.timeout(20000),
+  return fetch(endpoint)
+    .then((res) => {
+      if (!res.ok) throw new Error("Produktet kunne ikke hentes");
+      return res.json();
+    })
+    .then(visProdukt)
+    .catch((error) => {
+      statusMessage.textContent = "Produktet kunne ikke hentes. Prøv igen.";
+      retryButton.hidden = false;
+      console.error(error);
     });
-
-    if (!response.ok) {
-      throw new Error("Produktet kunne ikke hentes: " + response.status);
-    }
-
-    const product = await response.json();
-    if (!product.id || !product.productdisplayname) {
-      throw new Error("Ugyldigt produkt");
-    }
-
-    showProduct(product);
-    statusMessage.textContent = "";
-    productCard.hidden = false;
-  } catch (error) {
-    statusMessage.textContent = "Produktet kunne ikke hentes. Prøv igen.";
-    retryButton.hidden = false;
-    console.error(error);
-  }
 }
 
-// Sætter oplysningerne ind i de tomme felter i HTML'en.
-function showProduct(product) {
-  const name = product.productdisplayname.toLowerCase();
-  const colourKey = Object.keys(colours).find((key) => name.includes(key.toLowerCase())) || product.basecolour;
-  const colour = colours[colourKey] || product.basecolour || "";
-  const danishType = name.includes("swimming cap") ? "badehætte" : types[product.articletype];
-  const type = danishType || product.articletype || "produkt";
+function visProdukt(produkt) {
+  const tilbudspris = Math.round(produkt.price - produkt.price * produkt.discount / 100);
+  let farve = farver[produkt.basecolour] || produkt.basecolour || "";
+  let type = typer[produkt.articletype] || produkt.articletype || "produkt";
+  const navn = produkt.productdisplayname.toLowerCase();
 
-  document.title = product.productdisplayname + " | Jennifers sportsbutik";
-  document.querySelector("#brand").textContent = product.brandname || "";
-  document.querySelector("#product-name").textContent = product.productdisplayname;
-  const price = document.querySelector("#price");
-  price.textContent = "Pris: " + formatPrice(product.price);
+  // De særlige farvenavne og badehætten oversættes også.
+  if (navn.includes("navy blue") || navn.includes("marine blue")) farve = "mørkeblå";
+  if (navn.includes("silver-black")) farve = "sølvfarvet og sort";
+  if (navn.includes("blue-black")) farve = "blå og sort";
+  if (navn.includes("swimming cap")) type = "badehætte";
 
-  // Detaljesiden bruger de samme tilbud og lagerstatus som listen.
-  productCard.classList.toggle("soldout", Boolean(product.soldout));
-  document.querySelector("#soldout-label").hidden = !product.soldout;
-  document.querySelector("#discount-label").hidden = !product.discount;
-  document.querySelector("#old-price").hidden = !product.discount;
-  price.classList.toggle("sale-price", Boolean(product.discount));
+  // Bruger kun et materiale, som faktisk står i API'et.
+  const materialetekst = ((produkt.materialcaredesc || "") + " " + (produkt.description || "")).toLowerCase();
+  let materiale = "";
+  if (materialetekst.includes("polyester")) materiale = "polyester";
+  else if (materialetekst.includes("nylon")) materiale = "nylon";
+  else if (materialetekst.includes("polyamide")) materiale = "polyamid";
+  else if (materialetekst.includes("silicone")) materiale = "silikone";
+  else if (materialetekst.includes("cotton")) materiale = "bomuld";
 
-  if (product.discount) {
-    document.querySelector("#discount-label").textContent = "Tilbud · -" + product.discount + "%";
-    const salePrice = product.price - product.price * product.discount / 100;
-    price.textContent = "Nu: " + formatPrice(salePrice);
-    document.querySelector("#old-price del").textContent = formatPrice(product.price);
-  }
-  document.querySelector("#type").textContent = type;
-  document.querySelector("#colour").textContent = colour ? colour[0].toUpperCase() + colour.slice(1) : "–";
-  document.querySelector("#gender").textContent = { Men: "Herre", Women: "Dame" }[product.gender] || product.gender || "–";
-  document.querySelector("#product-id").textContent = product.id;
+  let beskrivelse = farve ? "Farve: " + farve : type;
+  if (materiale) beskrivelse += " · " + materiale;
 
-  // Kun farve, type og eventuelt et materiale, der faktisk står i API'et.
-  const materialText = ((product.materialcaredesc || "") + " " + (product.description || "")).toLowerCase();
-  const foundMaterials = Object.keys(materials)
-    .filter((key) => materialText.includes(key))
-    .map((key) => materials[key]);
-  const shortText = danishType
-    ? [colour, danishType].filter(Boolean).join(" ")
-    : colour ? "Farve: " + colour : "Produkt fra " + (product.brandname || "butikken");
-  const material = foundMaterials.length ? " · " + foundMaterials.slice(0, 2).join(" og ") : "";
-  document.querySelector("#description").textContent = shortText[0].toUpperCase() + shortText.slice(1) + material;
-  document.querySelector("#description-section").hidden = false;
+  produktKort.className = "detail-grid " + (produkt.soldout ? "soldout" : "");
+  produktKort.innerHTML = `
+    <div class="product-image">
+      <img id="product-image" src="https://kea-alt-del.dk/t7/images/webp/640/${Number(produkt.id)}.webp"
+        alt="" width="640" height="854" />
+      <span id="image-fallback" hidden>Billede mangler</span>
+      <div class="product-labels">
+        ${produkt.discount ? `<span id="discount-label" class="discount-label">Tilbud · -${Number(produkt.discount)}%</span>` : ""}
+        ${produkt.soldout ? '<span id="soldout-label" class="soldout-label">Udsolgt</span>' : ""}
+      </div>
+    </div>
+    <div class="detail-info">
+      <p id="brand" class="eyebrow"></p>
+      <h1 id="product-name"></h1>
+      <div class="price">
+        <p id="price" class="${produkt.discount ? "sale-price" : ""}">
+          ${produkt.discount ? "Nu: " + tilbudspris : "Pris: " + Math.round(produkt.price)}
+        </p>
+        ${produkt.discount ? `<p id="old-price" class="product-old-price">Før: <del>${Math.round(produkt.price)}</del></p>` : ""}
+      </div>
+      <dl>
+        <div><dt>Type</dt><dd id="type"></dd></div>
+        <div><dt>Farve</dt><dd id="colour"></dd></div>
+        <div><dt>Køn</dt><dd id="gender"></dd></div>
+        <div><dt>Produktnummer</dt><dd id="product-id"></dd></div>
+      </dl>
+      <section id="description-section">
+        <h2>Om produktet</h2>
+        <p id="description"></p>
+      </section>
+    </div>`;
 
-  const image = document.querySelector("#product-image");
-  const fallback = document.querySelector("#image-fallback");
-  image.hidden = false;
-  fallback.hidden = true;
-  image.alt = product.productdisplayname;
-  // Hvis billedet mangler, vises en kort besked i stedet.
-  image.onerror = () => {
+  // API'ets tekst fyldes ind i de tomme felter.
+  document.title = produkt.productdisplayname + " | Jennifers sportsbutik";
+  produktKort.querySelector("#brand").textContent = produkt.brandname;
+  produktKort.querySelector("#product-name").textContent = produkt.productdisplayname;
+  produktKort.querySelector("#type").textContent = type;
+  produktKort.querySelector("#colour").textContent = farve || "–";
+  produktKort.querySelector("#gender").textContent = koen[produkt.gender] || produkt.gender || "–";
+  produktKort.querySelector("#product-id").textContent = produkt.id;
+  produktKort.querySelector("#description").textContent = beskrivelse;
+
+  const image = produktKort.querySelector("#product-image");
+  image.alt = produkt.productdisplayname;
+  image.addEventListener("error", () => {
     image.hidden = true;
-    fallback.hidden = false;
-  };
-  image.src = "https://kea-alt-del.dk/t7/images/webp/640/" + product.id + ".webp";
-}
-
-function formatPrice(price) {
-  return Number(price).toLocaleString("da-DK", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    produktKort.querySelector("#image-fallback").hidden = false;
   });
+
+  statusMessage.textContent = "";
+  produktKort.hidden = false;
 }
