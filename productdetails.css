@@ -1,5 +1,5 @@
 /* Jeg bruger de samme grundfarver og fonte som på produktlisten. */
-@import url("productlist.css");
+@import url("productlist.css?v=2");
 
 .back-link {
   display: inline-block;
@@ -30,6 +30,9 @@
 .price {
   font-size: 22px;
   margin: 24px 0;
+}
+.price > p:first-child {
+  margin: 0;
 }
 
 dl {
