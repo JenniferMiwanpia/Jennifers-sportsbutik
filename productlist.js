@@ -4,6 +4,9 @@ const endpoint = `https://kea-alt-del.dk/t7/api/products?category=${encodeURICom
 const produktliste = document.querySelector("#product-list");
 const statusMessage = document.querySelector("#status");
 const retryButton = document.querySelector("#retry");
+const visantal = document.querySelector("#antal");
+const filtre = document.querySelector("#filtre");
+let alleData = [];
 
 document.title = cat + " | Jennifers sportsbutik";
 document.querySelector("#category-name").textContent = cat;
@@ -11,11 +14,17 @@ document.querySelector("#collection-title").textContent = cat;
 document.querySelector("#intro-text").textContent = "Produkter i kategorien " + cat + ".";
 
 retryButton.addEventListener("click", hentProdukter);
+document.querySelectorAll("#filtre button").forEach((button) => {
+  button.addEventListener("click", filtrer);
+});
 hentProdukter();
 
 // Henter produkterne og sender dem til visData.
 function hentProdukter() {
+  alleData = [];
+  filtre.hidden = true;
   produktliste.innerHTML = "";
+  visantal.textContent = "0 fundet";
   produktliste.setAttribute("aria-busy", "true");
   statusMessage.textContent = "Henter produkter …";
   retryButton.hidden = true;
@@ -25,7 +34,11 @@ function hentProdukter() {
       if (!res.ok) throw new Error("Produkterne kunne ikke hentes");
       return res.json();
     })
-    .then(visData)
+    .then((data) => {
+      alleData = data;
+      visData(data);
+      filtre.hidden = false;
+    })
     .catch((error) => {
       statusMessage.textContent = "Produkterne kunne ikke hentes. Prøv igen.";
       retryButton.hidden = false;
@@ -35,6 +48,8 @@ function hentProdukter() {
 }
 
 function visData(json) {
+  produktliste.innerHTML = "";
+  visantal.textContent = json.length + " fundet";
   json.forEach((produkt) => {
     // Rabatten trækkes fra, og prisen afrundes som i undervisningen.
     const tilbudspris = Math.round(produkt.price - produkt.price * produkt.discount / 100);
@@ -84,4 +99,18 @@ function visData(json) {
       image.nextElementSibling.hidden = false;
     });
   });
+}
+
+// Knapperne vælger produkter efter køn.
+function filtrer(event) {
+  const valgt = event.target.textContent;
+  document.querySelectorAll("#filtre button").forEach((button) => {
+    button.setAttribute("aria-pressed", button === event.target ? "true" : "false");
+  });
+
+  if (valgt === "Alle") {
+    visData(alleData);
+  } else {
+    visData(alleData.filter((produkt) => produkt.gender === valgt));
+  }
 }

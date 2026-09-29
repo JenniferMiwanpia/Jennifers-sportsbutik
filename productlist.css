@@ -82,6 +82,30 @@ h2 {
   font-size: 21px;
   margin: 0;
 }
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.filters button {
+  padding: 10px 14px;
+  border: 1px solid #d9dbd2;
+  background: white;
+  color: #22261f;
+  font-size: 13px;
+}
+.filters button[aria-pressed="true"] {
+  background: #33442b;
+  border-color: #33442b;
+  color: white;
+}
+.filters span {
+  margin-left: auto;
+  color: #60645b;
+  font-size: 13px;
+}
 .product-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
