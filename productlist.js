@@ -6,7 +6,9 @@ const statusMessage = document.querySelector("#status");
 const retryButton = document.querySelector("#retry");
 const visantal = document.querySelector("#antal");
 const filtre = document.querySelector("#filtre");
+const sortering = document.querySelector("#sortering");
 let alleData = [];
+let udsnit = [];
 
 document.title = cat + " | Jennifers sportsbutik";
 document.querySelector("#category-name").textContent = cat;
@@ -17,12 +19,17 @@ retryButton.addEventListener("click", hentProdukter);
 document.querySelectorAll("#filtre button").forEach((button) => {
   button.addEventListener("click", filtrer);
 });
+document.querySelectorAll("#sortering button").forEach((button) => {
+  button.addEventListener("click", sorter);
+});
 hentProdukter();
 
 // Henter produkterne og sender dem til visData.
 function hentProdukter() {
   alleData = [];
+  udsnit = [];
   filtre.hidden = true;
+  sortering.hidden = true;
   produktliste.innerHTML = "";
   visantal.textContent = "0 fundet";
   produktliste.setAttribute("aria-busy", "true");
@@ -36,8 +43,10 @@ function hentProdukter() {
     })
     .then((data) => {
       alleData = data;
-      visData(data);
+      udsnit = [...data];
+      visData(udsnit);
       filtre.hidden = false;
+      sortering.hidden = false;
     })
     .catch((error) => {
       statusMessage.textContent = "Produkterne kunne ikke hentes. Prøv igen.";
@@ -109,8 +118,30 @@ function filtrer(event) {
   });
 
   if (valgt === "Alle") {
-    visData(alleData);
+    udsnit = [...alleData];
   } else {
-    visData(alleData.filter((produkt) => produkt.gender === valgt));
+    udsnit = alleData.filter((produkt) => produkt.gender === valgt);
   }
+  document.querySelectorAll("#sortering button").forEach((button) => {
+    button.setAttribute("aria-pressed", "false");
+  });
+  visData(udsnit);
+}
+
+// Sorterer det udvalg, som vises lige nu.
+function sorter(event) {
+  const valgt = event.target.textContent;
+  if (valgt === "Pris lav-høj") {
+    udsnit.sort((a, b) => a.price - b.price);
+  } else if (valgt === "Pris høj-lav") {
+    udsnit.sort((a, b) => b.price - a.price);
+  } else if (valgt === "A-Z") {
+    udsnit.sort((a, b) => a.productdisplayname.localeCompare(b.productdisplayname, "da"));
+  } else if (valgt === "Z-A") {
+    udsnit.sort((a, b) => b.productdisplayname.localeCompare(a.productdisplayname, "da"));
+  }
+  document.querySelectorAll("#sortering button").forEach((button) => {
+    button.setAttribute("aria-pressed", button === event.target ? "true" : "false");
+  });
+  visData(udsnit);
 }

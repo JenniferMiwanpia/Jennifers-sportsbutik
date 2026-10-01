@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Produkter | Jennifers sportsbutik</title>
-    <link rel="stylesheet" href="productlist.css?v=4" />
-    <script src="productlist.js?v=6" defer></script>
+    <link rel="stylesheet" href="productlist.css?v=5" />
+    <script src="productlist.js?v=7" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Spring til indhold</a>
@@ -27,6 +27,13 @@
           <button type="button" aria-pressed="false">Women</button>
           <button type="button" aria-pressed="false">Men</button>
           <span id="antal" aria-live="polite">0 fundet</span>
+        </div>
+        <div class="sorting" id="sortering" role="group" aria-label="Sortér produkter" hidden>
+          <span>Sortér efter:</span>
+          <button type="button" aria-pressed="false">Pris lav-høj</button>
+          <button type="button" aria-pressed="false">Pris høj-lav</button>
+          <button type="button" aria-pressed="false">A-Z</button>
+          <button type="button" aria-pressed="false">Z-A</button>
         </div>
         <p id="status" role="status">Henter produkter …</p>
         <noscript>Slå JavaScript til for at se produktlisten.</noscript>
