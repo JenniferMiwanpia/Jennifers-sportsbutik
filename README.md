@@ -1,6 +1,6 @@
 # Jennifers sportsbutik – opgave A, B, C og D
 
-Åbn index.html med Live Server, eller brug https://jennifermiwanpia.github.io/opgave-a-produktliste/. Internet kræves til kategorier, produkter og billeder fra https://kea-alt-del.dk/t7/.
+Åbn index.html med Live Server, eller brug https://jennifermiwanpia.github.io/Jennifers-sportsbutik/. Internet kræves til kategorier, produkter og billeder fra https://kea-alt-del.dk/t7/.
 
 - Opgave A: productlist.html, productlist.js og productlist.css viser en dynamisk produktliste.
 - Opgave B: productdetails.html, productdetails.js og productdetails.css viser det produkt, man klikker på i listen. Produktets id sendes i URL'en og bruges til at hente ét produkt fra API'et.
