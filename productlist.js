@@ -1,4 +1,4 @@
-// Kategorien kommer fra linket på forsiden.
+// Husk: category læses fra adressen; ellers vises Accessories.
 const cat = new URLSearchParams(window.location.search).get("category") || "Accessories";
 const endpoint = `https://kea-alt-del.dk/t7/api/products?category=${encodeURIComponent(cat)}&limit=30`;
 const produktliste = document.querySelector("#product-list");
@@ -24,7 +24,7 @@ document.querySelectorAll("#sortering button").forEach((button) => {
 });
 hentProdukter();
 
-// Henter produkterne og sender dem til visData.
+// Jeg gemmer både alle varer og det udvalg, som filteret viser.
 function hentProdukter() {
   alleData = [];
   udsnit = [];
@@ -59,8 +59,9 @@ function hentProdukter() {
 function visData(json) {
   produktliste.innerHTML = "";
   visantal.textContent = json.length + " fundet";
+  // forEach laver et kort for hver vare i det valgte udvalg.
   json.forEach((produkt) => {
-    // Rabatten trækkes fra, og prisen afrundes som i undervisningen.
+    // Tilbudsprisen er normalprisen minus rabatten i procent.
     const tilbudspris = Math.round(produkt.price - produkt.price * produkt.discount / 100);
 
     produktliste.innerHTML += `
@@ -89,7 +90,7 @@ function visData(json) {
         </a>
       </article>`;
 
-    // Teksten og linket sættes ind i det nye produktkort.
+    // Produktets id i linket bruges på detaljesiden.
     const kort = produktliste.lastElementChild;
     kort.querySelector(".product-name").textContent = produkt.productdisplayname;
     kort.querySelector(".product-brand").textContent = produkt.brandname + " · " + produkt.articletype;
@@ -101,7 +102,7 @@ function visData(json) {
   statusMessage.textContent = json.length ? "" : "Der er ingen produkter at vise.";
   produktliste.setAttribute("aria-busy", "false");
 
-  // Viser en besked, hvis et billede ikke kan hentes.
+  // Hvis billedet mangler, viser jeg teksten i stedet.
   produktliste.querySelectorAll("img").forEach((image) => {
     image.addEventListener("error", () => {
       image.hidden = true;
@@ -110,7 +111,7 @@ function visData(json) {
   });
 }
 
-// Knapperne vælger produkter efter køn.
+// filter laver et nyt udvalg efter køn; Alle bruger hele listen igen.
 function filtrer(event) {
   const valgt = event.target.textContent;
   document.querySelectorAll("#filtre button").forEach((button) => {
@@ -128,7 +129,7 @@ function filtrer(event) {
   visData(udsnit);
 }
 
-// Sorterer det udvalg, som vises lige nu.
+// sort ændrer rækkefølgen på det udvalg, der vises lige nu.
 function sorter(event) {
   const valgt = event.target.textContent;
   if (valgt === "Pris lav-høj") {

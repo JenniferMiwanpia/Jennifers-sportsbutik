@@ -1,4 +1,4 @@
-// Id'et kommer fra det produkt, man klikker på i listen.
+// Husk: id i adressen fortæller, hvilket produkt jeg skal hente.
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 const cat = params.get("category");
@@ -7,11 +7,12 @@ const produktKort = document.querySelector("#product");
 const statusMessage = document.querySelector("#status");
 const retryButton = document.querySelector("#retry");
 
-// Tilbage-linket husker den valgte kategori.
+// category bruges til at komme tilbage til den samme kategori.
 document.querySelector(".back-link").href = cat
   ? "productlist.html?category=" + encodeURIComponent(cat)
   : "productlist.html";
 
+// Her oversætter jeg nogle af API'ets ord til dansk.
 const farver = {
   "Silver-Black": "sølvfarvet og sort",
   "Blue-Black": "blå og sort",
@@ -30,7 +31,7 @@ const koen = { Men: "Herre", Women: "Dame", Unisex: "Unisex" };
 retryButton.addEventListener("click", hentProdukt);
 hentProdukt();
 
-// Henter ét produkt, så her bruges ingen forEach.
+// Her henter jeg kun ét produkt, så jeg behøver ikke forEach.
 function hentProdukt() {
   if (!id) {
     statusMessage.textContent = "Vælg et produkt fra produktlisten.";
@@ -60,13 +61,13 @@ function visProdukt(produkt) {
   let type = typer[produkt.articletype] || produkt.articletype || "produkt";
   const navn = produkt.productdisplayname.toLowerCase();
 
-  // De særlige farvenavne og badehætten oversættes også.
+  // Nogle navne kræver en mere præcis oversættelse.
   if (navn.includes("navy blue") || navn.includes("marine blue")) farve = "mørkeblå";
   if (navn.includes("silver-black")) farve = "sølvfarvet og sort";
   if (navn.includes("blue-black")) farve = "blå og sort";
   if (navn.includes("swimming cap")) type = "badehætte";
 
-  // Bruger kun et materiale, som faktisk står i API'et.
+  // Jeg nævner kun materiale, hvis det står i API'ets tekst.
   const materialetekst = ((produkt.materialcaredesc || "") + " " + (produkt.description || "")).toLowerCase();
   let materiale = "";
   if (materialetekst.includes("polyester")) materiale = "polyester";
@@ -110,7 +111,7 @@ function visProdukt(produkt) {
       </section>
     </div>`;
 
-  // API'ets tekst fyldes ind i de tomme felter.
+  // Felterne fyldes ud, efter produktkortet er lavet.
   document.title = produkt.productdisplayname + " | Jennifers sportsbutik";
   produktKort.querySelector("#brand").textContent = produkt.brandname;
   produktKort.querySelector("#product-name").textContent = produkt.productdisplayname;

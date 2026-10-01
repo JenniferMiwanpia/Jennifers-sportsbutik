@@ -1,9 +1,10 @@
+// Husk: endpoint er adressen, hvor jeg henter kategorierne.
 const endpoint = "https://kea-alt-del.dk/t7/api/categories";
 const kategoriliste = document.querySelector("#categories");
 const statusMessage = document.querySelector("#status");
 const retryButton = document.querySelector("#retry");
 
-// Et produktbillede til hver kategori.
+// Her vælger jeg ét billede til hver kategori.
 const billeder = {
   Accessories: 1526,
   Apparel: 1644,
@@ -13,10 +14,11 @@ const billeder = {
   "Sporting Goods": 1628,
 };
 
+// Prøv igen-knappen starter samme hentning en gang til.
 retryButton.addEventListener("click", hentKategorier);
 hentKategorier();
 
-// Henter kategorierne og sender dem til visData.
+// fetch henter data, og res.json() gør svaret klar til JavaScript.
 function hentKategorier() {
   kategoriliste.innerHTML = "";
   statusMessage.textContent = "Henter kategorier …";
@@ -36,6 +38,7 @@ function hentKategorier() {
 }
 
 function visData(json) {
+  // forEach laver et kort for hver kategori fra API'et.
   json.forEach((kategori) => {
     const billede = billeder[kategori.category];
     kategoriliste.innerHTML += `
@@ -45,7 +48,7 @@ function visData(json) {
         <span>Se produkter →</span>
       </a>`;
 
-    // Navn og link sættes på det nye kort.
+    // encodeURIComponent gør, at kategorier med mellemrum også virker i linket.
     const kort = kategoriliste.lastElementChild;
     kort.querySelector("h3").textContent = kategori.category;
     kort.href = "productlist.html?category=" + encodeURIComponent(kategori.category);
